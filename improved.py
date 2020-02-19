@@ -67,6 +67,22 @@ def cropROI(image):
     return image
 
 
+def processSources(listSources,dif_factor):
+    
+    new_list=[]
+    new_list.append(listSources[0][0])
+    sz= len(listSources)
+    min_tuple=(-1,99999999999999999)
+    for i in range(sz):
+        if listSources[i][1]<min_tuple[1]:min_tuple=listSources[i]
+        if i!=sz-1 and listSources[i+1][0]-listSources[i][0]>=dif_factor:
+            new_list.append(min_tuple[0])
+            min_tuple=(-1,99999999999999999)
+    new_list.append(listSources[sz-1][0])
+            
+    return new_list
+
+
 if os.path.isfile("rotated_header_removed"+input_img)==0:
     print("here")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -117,3 +133,45 @@ img=cropROI(img)
 #cv2.imshow("tmp.jpg",img)
 #cv2.waitKey(0)
 cv2.imwrite("cropped_"+input_img,img)
+
+
+vertical_projection= getVerticalProjectionProfile(img)
+ 
+min_density= min(vertical_projection)
+max_density= max(vertical_projection)
+ 
+cutoff_factor= 0.2 #adjustable
+ 
+cutoff_density= (max_density-min_density)*cutoff_factor+ min_density
+ 
+source_segment_points= list()
+ 
+width=img.shape[1]
+height= img.shape[0]
+ 
+for i in range(width):
+    if vertical_projection[i]<=cutoff_density:
+        source_segment_points.append((i,vertical_projection[i]))
+ 
+'''source_segment_points= processSources(source_segment_points,3)
+source_segment_points= processSources(source_segment_points,10)
+source_segment_points= processSources(source_segment_points,20)
+print(source_segment_points)'''
+source_segment_points= processSources(source_segment_points,20)
+#source_segment_points= processSources(source_segment_points,40)
+#source_segment_points= processSources(source_segment_points,60)
+ 
+# checker code
+ 
+tmpimg=img.copy()
+for i in source_segment_points:
+    for j in range(height):
+        tmpimg[j][i]= 0
+ 
+#cv2.imshow("tmp.jpg",tmpimg)
+cv2.imwrite("basic_seg"+input_img,tmpimg)
+#cv2.waitKey(0)
+#cv2.imshow("tmp1.jpg",img)
+#cv2.waitKey(0)
+ 
+#-------------------#
