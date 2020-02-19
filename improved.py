@@ -272,3 +272,16 @@ cv2.imwrite("basic_seg"+input_img,tmpimg)
 #cv2.waitKey(0)
  
 #-------------------#
+
+
+tmpimg= img.copy()
+ 
+for source in source_segment_points:
+    path=dijikstra(img,source,cutoff_density)
+    for p in path:
+        #print(p,type(p))
+        tmpimg[p[0]][p[1]]=0
+ 
+#cv2.imshow("tmpfinal.jpg",tmpimg)
+#cv2.waitKey(0)
+cv2.imwrite("final_seg_only_rand"+input_img,tmpimg)
