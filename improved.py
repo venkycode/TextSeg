@@ -93,6 +93,84 @@ def weights( pixel_a,  pixel_b):
  
 
 
+def dijikstra(image,source,cutoff):
+    #print(source)
+    offset=40
+    inf=100000000000000
+    height=image.shape[0]
+    width=image.shape[1]
+    miny=max(0,source-offset)
+    maxy=min(width,source+offset)
+    start=(0,0,source)
+    queue=[]
+    queue.append(start)
+    heapq.heapify(queue)
+    visited = [[0 for i in range(image.shape[1])] for j in range(image.shape[0])]
+    dist= [[inf for i in range(image.shape[1])] for j in range(image.shape[0])]
+    parent= [[(-1,-1) for i in range(image.shape[1])] for j in range(image.shape[0])]
+    dist[start[0]][start[1]]=0
+    destination=(-1,-1)
+    path_distance=-1
+    while queue:
+        node=heapq.heappop(queue)
+        x=node[2]
+        y=node[3]
+        d=node[0]
+        #print("node ",node)
+        if x==height-1:
+            destination=(x,y)
+            path_distance=d
+            break
+        visited[x][y]=1
+        
+        if y-1>=miny:
+            if visited[x][y-1]==0:
+                new_d=d + weights(image[x][y],image[x][y-1])
+                if dist[x][y-1] > new_d:
+                    heapq.heappush(queue,(new_d,seed,x,y-1))
+                    dist[x][y-1]=new_d
+                    parent[x][y-1]=(x,y)
+            
+        
+        if y+1<maxy:
+            if visited[x][y+1]==0:
+                new_d=d + weights(image[x][y],image[x][y+1])
+                if dist[x][y+1] > new_d:
+                    heapq.heappush(queue,(new_d,seed,x,y+1))
+                    dist[x][y+1]=new_d
+                    parent[x][y+1]=(x,y)
+           
+ 
+        if x-1>=0:
+            if visited[x-1][y]==0:
+                new_d=d + weights(image[x][y],image[x-1][y])
+                if dist[x-1][y] > new_d:
+                    heapq.heappush(queue,(new_d,seed,x-1,y))
+                    dist[x-1][y]=new_d
+                    parent[x-1][y]=(x,y)
+ 
+        if x+1<height:
+             if visited[x+1][y]==0:
+                new_d=d + weights(image[x][y],image[x+1][y])
+                if dist[x+1][y] > new_d:
+                    heapq.heappush(queue,(new_d,seed,x+1,y))
+                    dist[x+1][y]=new_d
+                    parent[x+1][y]=(x,y)
+             
+ 
+    path=[]
+    cur=destination
+    source_tuple=(0,source)
+    while cur != source_tuple:
+        path.append(cur)
+        cur=parent[cur[0]][cur[1]]
+ 
+    path.append(source_tuple)
+    
+    cutoff_distance=0.45*cutoff
+    if path_distance <= cutoff_distance : return path
+    return []
+    
 
 if os.path.isfile("rotated_header_removed"+input_img)==0:
     print("here")
