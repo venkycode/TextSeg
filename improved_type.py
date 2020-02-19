@@ -102,7 +102,7 @@ def weights(pixel_a,  pixel_b):
 
 def dijikstra(image, source, cutoff):
     # print(source)
-    offset = 40
+    offset = 20
     inf = 100000000000000
     height = image.shape[0]
     width = image.shape[1]
@@ -182,7 +182,7 @@ def dijikstra(image, source, cutoff):
 
     path.append(source_tuple)
 
-    cutoff_distance = 0.5*cutoff
+    cutoff_distance = 2.5*cutoff
     if path_distance <= cutoff_distance:
         return path
     return []
@@ -196,7 +196,9 @@ def processForConnectedLetters(source_segment_points,img):
         if(i-cur):
             mn=min(mn,i-cur)
         cur=i
-    #if(img.shape[1]-cur):
+    #print(cur,img.shape[1])
+    if(img.shape[1]-cur-1>mn):
+        source_segment_points.append(img.shape[1]-1) ## segment for last letter which might be missed while cropping
         #mn=min(img.shape[1]-cur,mn)
     
     cur=0
@@ -252,7 +254,7 @@ vertical_projection = getVerticalProjectionProfile(img)
 min_density = min(vertical_projection)
 max_density = max(vertical_projection)
 
-cutoff_factor = 0.2  # adjustable
+cutoff_factor = 0.05  # adjustable
 
 cutoff_density = (max_density-min_density)*cutoff_factor + min_density
 
@@ -267,10 +269,10 @@ for i in range(width):
 
 '''
 print(source_segment_points)'''
-source_segment_points = processSources(source_segment_points, 20)
+source_segment_points = processSources(source_segment_points, 10)
 print(source_segment_points)
-#source_segment_points= processForConnectedLetters(source_segment_points,img)
-#print(source_segment_points)
+source_segment_points= processForConnectedLetters(source_segment_points,img)
+print(source_segment_points)
 #source_segment_points= processSources(source_segment_points,40)
 #source_segment_points= processSources(source_segment_points,60)
 
@@ -282,7 +284,10 @@ for i in source_segment_points:
         #print(i,j)
         tmpimg[j][i] = 155
 
+cv2.imshow("basic_seg"+input_img, tmpimg)
+cv2.waitKey(0)
 cv2.imwrite("basic_seg"+input_img, tmpimg)
+
 
 #-------------------#
 
@@ -294,4 +299,7 @@ for source in source_segment_points:
     for p in path:
         tmpimg[p[0]][p[1]] = 150
 
+
+cv2.imshow("final_seg_"+input_img, tmpimg)
+cv2.waitKey(0)
 cv2.imwrite("final_seg_"+input_img, tmpimg)
