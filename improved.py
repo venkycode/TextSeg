@@ -6,7 +6,7 @@ import os
 import heapq
 import random
 
-input_img = "im3.png"
+input_img = "im2.png"
 img = cv2.imread(input_img)
 
 

@@ -4,3 +4,9 @@ img2.jpg= 0.5
 images need to be standardized
 header and footer detection
 connected words have more length hence cutted them in half and then applied djikstra
+
+4 43 : increased weight while traveling from white to white so that the path is not deviated
+
+as the text is not standardized we need to adjust the cutoff factor for every image
+im1=2.75
+im6=2.5

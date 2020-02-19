@@ -7,7 +7,7 @@ import heapq
 import random
 from math import ceil
 
-input_img = "im1.png"
+input_img = "im2.png"
 img = cv2.imread(input_img)
 
 
@@ -182,20 +182,21 @@ def dijikstra(image, source, cutoff):
 
     path.append(source_tuple)
 
-    cutoff_distance = 2.5*cutoff
+    cutoff_distance = 2.75*cutoff
     if path_distance <= cutoff_distance:
         return path
     return []
 
 
 def processForConnectedLetters(source_segment_points,img):
-    cur=0 
+    cur=-20 
     mn=1000000000
     new_points=list()
     for i in source_segment_points:
-        if(i-cur):
-            mn=min(mn,i-cur)
-        cur=i
+        if(i):
+            if(i-cur):
+                mn=min(mn,i-cur)
+            cur=i
     #print(cur,img.shape[1])
     if(img.shape[1]-cur-1>mn):
         source_segment_points.append(img.shape[1]-1) ## segment for last letter which might be missed while cropping
@@ -271,6 +272,14 @@ for i in range(width):
 print(source_segment_points)'''
 source_segment_points = processSources(source_segment_points, 10)
 print(source_segment_points)
+tmpimg = img.copy()
+for i in source_segment_points:
+    for j in range(height):
+        #print(i,j)
+        tmpimg[j][i] = 155
+
+cv2.imshow("basic_seg"+input_img, tmpimg)
+cv2.waitKey(0)
 source_segment_points= processForConnectedLetters(source_segment_points,img)
 print(source_segment_points)
 #source_segment_points= processSources(source_segment_points,40)
