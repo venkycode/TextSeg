@@ -1,3 +1,6 @@
 x*cutoff 
 img1.jpg=0.3
 img2.jpg= 0.5
+images need to be standardized
+header and footer detection
+connected words have more length hence cutted them in half and then applied djikstra
