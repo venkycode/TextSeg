@@ -5,8 +5,9 @@ import imutils
 import os
 import heapq
 import random
+from math import ceil
 
-input_img = "im3.png"
+input_img = "im1.png"
 img = cv2.imread(input_img)
 
 
@@ -181,57 +182,62 @@ def dijikstra(image, source, cutoff):
 
     path.append(source_tuple)
 
-    cutoff_distance = 0.35*cutoff
+    cutoff_distance = 0.5*cutoff
     if path_distance <= cutoff_distance:
         return path
     return []
 
 
-if os.path.isfile("rotated_header_removed"+input_img) == 0:
+def processForConnectedLetters(source_segment_points,img):
+    cur=0 
+    mn=1000000000
+    new_points=list()
+    for i in source_segment_points:
+        if(i-cur):
+            mn=min(mn,i-cur)
+        cur=i
+    #if(img.shape[1]-cur):
+        #mn=min(img.shape[1]-cur,mn)
+    
+    cur=0
+    print("mn ",mn)
+    
+    for i in source_segment_points:
+        if (i-cur)>=1.5*mn:
+            new_points.append(ceil(cur+(i-cur)*0.5))
+        cur=i
+    for i in new_points:
+        source_segment_points.append(i)
+    return source_segment_points
+
+if os.path.isfile("header_removed"+input_img) == 0:
     print("here")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     (thresh, img) = cv2.threshold(img, 128,
                                   255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    final_img = list(list())
-    mx = 0
-    final_pro = list()
-    for mult in range(-7, 7):
-        #rotated = imutils.rotate_bound(img, 0.5* mult)
-        rows = img.shape[0]
-        cols = img.shape[1]
-
-        img_center = (cols / 2, rows / 2)
-        M = cv2.getRotationMatrix2D(img_center, mult*0.5, 1)
-        rotated = cv2.warpAffine(img, M, (cols, rows),
-                                 borderMode=cv2.BORDER_CONSTANT,
-                                 borderValue=(255, 255, 255))
-        pro = getHorizontalProjectionProfile(rotated)
-
-        if mx < max(pro):
-            final_img = rotated
-            mx = max(pro)
-            final_pro = pro
-    print(mx)
-    img = final_img
     height = img.shape[0]
     width = img.shape[1]
-    pro = final_pro
+    pro = getHorizontalProjectionProfile(img)
+    mx=max(pro)
     header_position1 = -1
     header_position2 = -1
     for i in range(height):
-        if(abs(mx-pro[i]) <= mx*0.30):
+        if(abs(mx-pro[i]) <= mx*0.40):
             if header_position1 == -1:
                 header_position1 = i
             header_position2 = i
             for j in range(width):
                 img[i][j] = 255
-    # correctHeader(img,header_position1,header_position2)
+    #correctHeader(img,header_position1,header_position2)
+    for i in range(max(header_position1-5,0),header_position1):
+        for j in range(img.shape[1]):
+            img[i][j]=255
     cv2.imshow('output.png', img)
     cv2.waitKey(0)
-    cv2.imwrite("rotated_header_removed"+input_img, img)
+    cv2.imwrite("header_removed"+input_img, img)
 
 
-img = cv2.imread("rotated_header_removed"+input_img)
+img = cv2.imread("header_removed"+input_img)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 print(img)
@@ -262,7 +268,9 @@ for i in range(width):
 '''
 print(source_segment_points)'''
 source_segment_points = processSources(source_segment_points, 20)
-source_segment_points
+print(source_segment_points)
+#source_segment_points= processForConnectedLetters(source_segment_points,img)
+#print(source_segment_points)
 #source_segment_points= processSources(source_segment_points,40)
 #source_segment_points= processSources(source_segment_points,60)
 
@@ -271,7 +279,8 @@ source_segment_points
 tmpimg = img.copy()
 for i in source_segment_points:
     for j in range(height):
-        tmpimg[j][i] = 0
+        #print(i,j)
+        tmpimg[j][i] = 155
 
 cv2.imwrite("basic_seg"+input_img, tmpimg)
 
@@ -283,6 +292,6 @@ tmpimg = img.copy()
 for source in source_segment_points:
     path = dijikstra(img, source, cutoff_density)
     for p in path:
-        tmpimg[p[0]][p[1]] = 0
+        tmpimg[p[0]][p[1]] = 150
 
 cv2.imwrite("final_seg_"+input_img, tmpimg)
