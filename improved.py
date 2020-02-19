@@ -3,6 +3,8 @@ import sys
 import numpy as np
 import imutils
 import os
+import heapq
+import random
 
 
 input_img= "img2.jpg"
@@ -81,6 +83,15 @@ def processSources(listSources,dif_factor):
     new_list.append(listSources[sz-1][0])
             
     return new_list
+
+def weights( pixel_a,  pixel_b):
+    #print(pixel_a, pixel_b)
+    sum = int(bool(pixel_a)) + int(bool(pixel_b))
+    if sum== 1:return 1
+    elif sum==2:return 0
+    else: return 1
+ 
+
 
 
 if os.path.isfile("rotated_header_removed"+input_img)==0:
