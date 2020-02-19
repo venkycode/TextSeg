@@ -38,6 +38,35 @@ def getHorizontalProjectionProfile(image):
     return horizontal_projection 
 
 
+def cropROI(image):
+    height=image.shape[0]
+    width=image.shape[1]
+    horizontal_projection=getHorizontalProjectionProfile(image)
+    verticle_projection=getVerticalProjectionProfile(image)
+    start_x=-1
+    end_x=width
+    start_y=-1
+    end_y=height
+    for i in range(width):
+        if verticle_projection[i]:
+            start_x= i-1
+            break
+    for i in range(width-1,0,-1):
+        if verticle_projection[i]:
+            end_x= i+1
+            break
+    for i in range(height):
+        if horizontal_projection[i]:
+            start_y= i-1
+            break
+    for i in range(height-1,0,-1):
+        if horizontal_projection[i]:
+            end_y= i+1
+            break
+    image= image[start_y:end_y, start_x:end_x]
+    return image
+
+
 if os.path.isfile("rotated_header_removed"+input_img)==0:
     print("here")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -78,3 +107,13 @@ if os.path.isfile("rotated_header_removed"+input_img)==0:
     cv2.imshow('output.png',img)
     cv2.waitKey(0)         
     cv2.imwrite("rotated_header_removed"+input_img,img)
+
+
+img=cv2.imread("rotated_header_removed"+input_img);
+img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+(thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+print(img)
+img=cropROI(img)
+#cv2.imshow("tmp.jpg",img)
+#cv2.waitKey(0)
+cv2.imwrite("cropped_"+input_img,img)
