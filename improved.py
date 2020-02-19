@@ -1,7 +1,6 @@
 import cv2
 import sys
 import numpy as np
-import imutils
 import os
 import heapq
 import random
@@ -188,7 +187,7 @@ def dijikstra(image, source, cutoff):
 
 
 if os.path.isfile("rotated_header_removed"+input_img) == 0:
-    print("here")
+    #print("here")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     (thresh, img) = cv2.threshold(img, 128,
                                   255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -211,7 +210,7 @@ if os.path.isfile("rotated_header_removed"+input_img) == 0:
             final_img = rotated
             mx = max(pro)
             final_pro = pro
-    print(mx)
+    #print(mx)
     img = final_img
     height = img.shape[0]
     width = img.shape[1]
@@ -226,8 +225,8 @@ if os.path.isfile("rotated_header_removed"+input_img) == 0:
             for j in range(width):
                 img[i][j] = 255
     # correctHeader(img,header_position1,header_position2)
-    cv2.imshow('output.png', img)
-    cv2.waitKey(0)
+    #cv2.imshow('output.png', img)
+    #cv2.waitKey(0)
     cv2.imwrite("rotated_header_removed"+input_img, img)
 
 
