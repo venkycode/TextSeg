@@ -101,7 +101,7 @@ def dijikstra(image,source,cutoff):
     width=image.shape[1]
     miny=max(0,source-offset)
     maxy=min(width,source+offset)
-    start=(0,0,source)
+    start=(0,0,0,source)
     queue=[]
     queue.append(start)
     heapq.heapify(queue)
@@ -126,6 +126,8 @@ def dijikstra(image,source,cutoff):
         if y-1>=miny:
             if visited[x][y-1]==0:
                 new_d=d + weights(image[x][y],image[x][y-1])
+                seed=random.randint(0,100)
+                    #seed=0
                 if dist[x][y-1] > new_d:
                     heapq.heappush(queue,(new_d,seed,x,y-1))
                     dist[x][y-1]=new_d
@@ -135,6 +137,8 @@ def dijikstra(image,source,cutoff):
         if y+1<maxy:
             if visited[x][y+1]==0:
                 new_d=d + weights(image[x][y],image[x][y+1])
+                seed=random.randint(0,100)
+                    #seed=0
                 if dist[x][y+1] > new_d:
                     heapq.heappush(queue,(new_d,seed,x,y+1))
                     dist[x][y+1]=new_d
@@ -144,6 +148,8 @@ def dijikstra(image,source,cutoff):
         if x-1>=0:
             if visited[x-1][y]==0:
                 new_d=d + weights(image[x][y],image[x-1][y])
+                seed=random.randint(0,100)
+                    #seed=0
                 if dist[x-1][y] > new_d:
                     heapq.heappush(queue,(new_d,seed,x-1,y))
                     dist[x-1][y]=new_d
@@ -151,6 +157,8 @@ def dijikstra(image,source,cutoff):
  
         if x+1<height:
              if visited[x+1][y]==0:
+                 seed=random.randint(0,100)
+                    #seed=0
                 new_d=d + weights(image[x][y],image[x+1][y])
                 if dist[x+1][y] > new_d:
                     heapq.heappush(queue,(new_d,seed,x+1,y))
