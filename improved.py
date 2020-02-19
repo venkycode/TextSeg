@@ -260,9 +260,7 @@ for i in range(width):
     if vertical_projection[i] <= cutoff_density:
         source_segment_points.append((i, vertical_projection[i]))
 
-'''source_segment_points= processSources(source_segment_points,3)
-source_segment_points= processSources(source_segment_points,10)
-source_segment_points= processSources(source_segment_points,20)
+'''
 print(source_segment_points)'''
 source_segment_points = processSources(source_segment_points, 20)
 #source_segment_points= processSources(source_segment_points,40)
@@ -275,11 +273,7 @@ for i in source_segment_points:
     for j in range(height):
         tmpimg[j][i] = 0
 
-# cv2.imshow("tmp.jpg",tmpimg)
 cv2.imwrite("basic_seg"+input_img, tmpimg)
-# cv2.waitKey(0)
-# cv2.imshow("tmp1.jpg",img)
-# cv2.waitKey(0)
 
 #-------------------#
 
@@ -289,9 +283,6 @@ tmpimg = img.copy()
 for source in source_segment_points:
     path = dijikstra(img, source, cutoff_density)
     for p in path:
-        # print(p,type(p))
         tmpimg[p[0]][p[1]] = 0
 
-# cv2.imshow("tmpfinal.jpg",tmpimg)
-# cv2.waitKey(0)
 cv2.imwrite("final_seg_"+input_img, tmpimg)
