@@ -6,21 +6,22 @@ import heapq
 import random
 import math
 
-input_img = "im2.png"
+input_img = "im1.png"
 img = cv2.imread(input_img)
 height = img.shape[0]
 width = img.shape[1]
 header_position1 = -1
 header_position2 = -1
 part_projections = []
-offset = 20
+offset = 10
 parts = 20
-part_height=-1
+part_height = -1
 
 
-def getVerticalProjectionProfile(image, start_position=0, end_position=height):
+def getVerticalProjectionProfile(image, start_position=0, end_position=-1):
+    if end_position == -1:
+        end_position = height
     x = [[0 for i in range(width)] for j in range(height)]
-
     for i in range(start_position, end_position):
         for j in range(width):
             if image[i][j] == 0:
@@ -95,14 +96,14 @@ def removeHeader(img):
 
 
 def getSources():
-    global part_projections
+    # print(height)
+    full_projection = getVerticalProjectionProfile(img)
     sources = []
     l = -1
     for j in range(1, width):
-        header_part = math.ceil((header_position1+1)/part_height)
-        if part_projections[header_part][j-1] and part_projections[header_part][j] == 0:
+        if full_projection[j-1] and full_projection[j] == 0:
             l = j
-        if part_projections[header_part][j] and part_projections[header_part][j-1] == 0 and l != -1:
+        if full_projection[j] and full_projection[j-1] == 0 and l != -1:
             sources.append(l+(j-l)//2)
     return sources
 
@@ -157,6 +158,7 @@ cv2.imwrite("cropped_"+input_img, img)
 height = img.shape[0]
 width = img.shape[1]
 
+
 img = removeHeader(img)
 img = cv2.imread("rotated_header_removed"+input_img)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -171,10 +173,10 @@ for i in range(parts):
 # print(part_projections)
 
 sources = getSources()
-#print(sources)
+# print(sources)
 segments = getPath(sources)
 
-#print(segments)
+# print(segments)
 
 tmpimg = img.copy()
 for segment in segments:
