@@ -7,8 +7,12 @@ import heapq
 import random
 from math import ceil
 
-input_img = "im1.png"
+input_img = "im19.png"
 img = cv2.imread(input_img)
+flag = ""
+offset = 15
+
+the_factor = 2.5
 
 
 def getVerticalProjectionProfile(image, header_position=0):
@@ -102,7 +106,7 @@ def weights(pixel_a,  pixel_b):
 
 def dijikstra(image, source, cutoff):
     # print(source)
-    offset = 20
+    global offset
     inf = 100000000000000
     height = image.shape[0]
     width = image.shape[1]
@@ -181,36 +185,49 @@ def dijikstra(image, source, cutoff):
         cur = parent[cur[0]][cur[1]]
 
     path.append(source_tuple)
-
-    cutoff_distance = 2.5*cutoff
+    global the_factor
+    cutoff_distance = the_factor*cutoff
     if path_distance <= cutoff_distance:
+        print(path_distance, end=" ")
         return path
     return []
 
 
-def processForConnectedLetters(source_segment_points,img):
-    cur=0 
-    mn=1000000000
-    new_points=list()
+def processForConnectedLetters(source_segment_points, img):
+    mn = 1000000000
+    new_points = list()
+    cur = -20
     for i in source_segment_points:
-        if(i-cur):
-            mn=min(mn,i-cur)
-        cur=i
-    #print(cur,img.shape[1])
-    if(img.shape[1]-cur-1>mn):
-        source_segment_points.append(img.shape[1]-1) ## segment for last letter which might be missed while cropping
-        #mn=min(img.shape[1]-cur,mn)
-    
-    cur=0
-    print("mn ",mn)
-    
+        print(i-cur, end=" ")
+        if(i) and i != (img.shape[1]-1):
+            if(i-cur):
+                if(i-cur > 85):
+                    mn = min(mn, i-cur)
+                if i-cur > 140:
+                    #print("hhhhhhhh ",i,cur)
+                    new_points.append(ceil((i-cur)*0.4)+cur)
+        cur = i
+    print(img.shape)
+    # print(cur,img.shape[1])
+    if(img.shape[1]-cur-1 > mn):
+        # segment for last letter which might be missed while cropping
+        source_segment_points.append(img.shape[1]-1)
+        # mn=min(img.shape[1]-cur,mn)
+
+    cur = -20
+    print("mn ", mn)
+
     for i in source_segment_points:
-        if (i-cur)>=1.5*mn:
-            new_points.append(ceil(cur+(i-cur)*0.5))
-        cur=i
+        if i:
+            if (i-cur) >= 1.5*mn:
+                new_points.append(ceil(cur+(i-cur)*0.4))
+            cur = i
+    if(len(source_segment_points) == 3):  # i.e source_segment_points=[0,0,pt]
+        new_points.append(ceil(mn/2))
     for i in new_points:
         source_segment_points.append(i)
     return source_segment_points
+
 
 if os.path.isfile("header_removed"+input_img) == 0:
     print("here")
@@ -220,20 +237,20 @@ if os.path.isfile("header_removed"+input_img) == 0:
     height = img.shape[0]
     width = img.shape[1]
     pro = getHorizontalProjectionProfile(img)
-    mx=max(pro)
+    mx = max(pro)
     header_position1 = -1
     header_position2 = -1
     for i in range(height):
-        if(abs(mx-pro[i]) <= mx*0.40):
+        if(abs(mx-pro[i]) <= mx*0.30):
             if header_position1 == -1:
                 header_position1 = i
             header_position2 = i
             for j in range(width):
                 img[i][j] = 255
-    #correctHeader(img,header_position1,header_position2)
-    for i in range(max(header_position1-5,0),header_position1):
+    # correctHeader(img,header_position1,header_position2)
+    for i in range(max(header_position1-5, 0), header_position1):
         for j in range(img.shape[1]):
-            img[i][j]=255
+            img[i][j] = 255
     cv2.imshow('output.png', img)
     cv2.waitKey(0)
     cv2.imwrite("header_removed"+input_img, img)
@@ -254,7 +271,7 @@ vertical_projection = getVerticalProjectionProfile(img)
 min_density = min(vertical_projection)
 max_density = max(vertical_projection)
 
-cutoff_factor = 0.05  # adjustable
+cutoff_factor = 0.050  # adjustable
 
 cutoff_density = (max_density-min_density)*cutoff_factor + min_density
 
@@ -271,7 +288,16 @@ for i in range(width):
 print(source_segment_points)'''
 source_segment_points = processSources(source_segment_points, 10)
 print(source_segment_points)
-source_segment_points= processForConnectedLetters(source_segment_points,img)
+tmpimg = img.copy()
+for i in source_segment_points:
+    for j in range(height):
+        # print(i,j)
+        tmpimg[j][i] = 155
+
+cv2.imshow("basic_seg"+input_img, tmpimg)
+cv2.waitKey(0)
+cv2.imwrite("basic_seg_0"+input_img, tmpimg)
+source_segment_points = processForConnectedLetters(source_segment_points, img)
 print(source_segment_points)
 #source_segment_points= processSources(source_segment_points,40)
 #source_segment_points= processSources(source_segment_points,60)
@@ -281,7 +307,7 @@ print(source_segment_points)
 tmpimg = img.copy()
 for i in source_segment_points:
     for j in range(height):
-        #print(i,j)
+        # print(i,j)
         tmpimg[j][i] = 155
 
 cv2.imshow("basic_seg"+input_img, tmpimg)
@@ -302,4 +328,4 @@ for source in source_segment_points:
 
 cv2.imshow("final_seg_"+input_img, tmpimg)
 cv2.waitKey(0)
-cv2.imwrite("final_seg_"+input_img, tmpimg)
+cv2.imwrite("final_seg_"+flag+input_img, tmpimg)
