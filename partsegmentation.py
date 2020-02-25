@@ -6,7 +6,7 @@ import heapq
 import random
 import math
 
-input_img = "im2.png"
+input_img = "im3.png"
 img = cv2.imread(input_img)
 height = img.shape[0]
 width = img.shape[1]
