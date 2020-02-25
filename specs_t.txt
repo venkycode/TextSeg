@@ -2,3 +2,11 @@
 "a" letter
 "double t"
 "dra"
+
+offsets
+
+generally 20
+venkatesh 10
+abhishek 10
+asahtakon 10
+krishna 10
