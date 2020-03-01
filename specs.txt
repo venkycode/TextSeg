@@ -14,7 +14,7 @@ as the text is not standardized we need to adjust the cutoff factor for every im
 
 im1=        5               15    
 im2=        2.5             15
-im3=        2.5             15   ## short letter
+im3       2.5             15   ## short letter
 .
 .
 im6=        2.5             15   ## need standardisation in resolution
@@ -34,5 +34,29 @@ im17        2.5             15
 im18        3               15
 im19        2.5             15
 im20        2.5             15
+
+
+
+date 26-02
+
+variables for
+
+bangla segmentation
+
+header_offset = 0.2
+cutoff_factor = 0.2  # adjustable
+source_distance=10
+offset = 20
+shortest_path_cutoff=0.25
+
+
+
+oriya segmentation
+
+header_offset = 0.2
+cutoff_factor = 0.25  # adjustable
+source_distance=10
+offset = 30
+shortest_path_cutoff=0.30
 
 

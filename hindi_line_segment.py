@@ -110,13 +110,14 @@ def process(filename):
             continue
         list_of_words= break_line(line)
         for word in list_of_words:
-            cur_h=word.shape[0]
-            ratio= 200/cur_h
-            dim=(int(word.shape[1]*ratio),int(word.shape[0]*ratio))
-            upscaled_word=cv2.resize(word,dim,interpolation=cv2.INTER_CUBIC)
-            cv2.imwrite('./words/word'+str(cnt)+'.jpg',upscaled_word)
-            print(cur_h,upscaled_word.shape[0],ratio,dim)
-            cnt+=1
+            if word.shape[1]>50:
+                cur_h=word.shape[0]
+                ratio= 200/cur_h
+                dim=(int(word.shape[1]*ratio),int(word.shape[0]*ratio))
+                upscaled_word=cv2.resize(word,dim,interpolation=cv2.INTER_CUBIC)
+                cv2.imwrite('./hindiwords/word'+str(cnt)+'.jpg',upscaled_word)
+                print(cur_h,upscaled_word.shape[0],ratio,dim)
+                cnt+=1
         
 
 filename= glob.glob('./Test/Images/Images/page3.jpg')
