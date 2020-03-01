@@ -8,10 +8,10 @@ import random
 from math import ceil
 import glob
 
-num_zone=10
+num_zone=5
 height=0
 width=0
-offset=2
+offset=1
 dp_mat=list()
 isreachable=list()
 projection_matrix=list()
@@ -79,7 +79,7 @@ def backtrack(i,j):
             dp_mat[i-1][y]-=1
     
     for y in range(ll,rl+1):
-        if dp_mat[i-1][y]==0 and projection_matrix[i-1][y]==0 and isreachable[i-1][y]:
+        if dp_mat[i-1][y]==0 and projection_matrix[i-1][y]==0 and isreachable[i-1][y]==1:
             isreachable[i-1][y]=0
             backtrack(i-1,y)
     return
@@ -91,7 +91,7 @@ def process(img):
     global projection_matrix
     projection_matrix=createProjectionMatrix(img)
     global isreachable
-    isreachable=[[-1 for i in range(width)] for j in range(num_zone)]
+    isreachable=[[0 for i in range(width)] for j in range(num_zone)]
     global dp_mat
     dp_mat=[[0 for i in range(width)] for j in range(num_zone)]
     for i in range(num_zone):
@@ -133,7 +133,7 @@ def process(img):
     part_h= ceil(height/num_zone)
     for i in range(num_zone):
         for j in range(width):
-            if isreachable[i][j] and projection_matrix[i][j]==0:
+            if isreachable[i][j]==1 and projection_matrix[i][j]==0:
                 for k in range(part_h*i, min(part_h*(i+1), height)):
                         tmpimg[k][j]=100
     cv2.imshow("tmp",tmpimg)
