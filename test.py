@@ -89,6 +89,9 @@ def removeHeader(img):
     for i in range(max(0, header_position1-5), header_position1):
         for j in range(width):
             img[i][j] = 255
+    for i in range(header_position2,header_position2+5):
+        for j in range(width):
+            img[i][j]=255
     # correctHeader(img,header_position1,header_position2)
     #cv2.imshow('output.png', img)
     # cv2.waitKey(0)
