@@ -233,7 +233,7 @@ if os.path.isfile("rotated_header_removed"+input_img) == 0:
 img = cv2.imread("rotated_header_removed"+input_img)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-print(img)
+#print(img)
 img = cropROI(img)
 # cv2.imshow("tmp.jpg",img)
 # cv2.waitKey(0)

@@ -1,13 +1,12 @@
 import cv2
 import sys
 import numpy as np
-import imutils
 import os
 import heapq
 import random
 from math import ceil
 
-input_img = "im19.png"
+input_img = "test data/im19.png"
 img = cv2.imread(input_img)
 flag = ""
 offset = 15
@@ -230,7 +229,7 @@ def processForConnectedLetters(source_segment_points, img):
 
 
 if os.path.isfile("header_removed"+input_img) == 0:
-    print("here")
+    #print("here")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     (thresh, img) = cv2.threshold(img, 128,
                                   255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -287,7 +286,7 @@ for i in range(width):
 '''
 print(source_segment_points)'''
 source_segment_points = processSources(source_segment_points, 10)
-print(source_segment_points)
+#print(source_segment_points)
 tmpimg = img.copy()
 for i in source_segment_points:
     for j in range(height):
@@ -298,7 +297,7 @@ cv2.imshow("basic_seg"+input_img, tmpimg)
 cv2.waitKey(0)
 cv2.imwrite("basic_seg_0"+input_img, tmpimg)
 source_segment_points = processForConnectedLetters(source_segment_points, img)
-print(source_segment_points)
+#print(source_segment_points)
 #source_segment_points= processSources(source_segment_points,40)
 #source_segment_points= processSources(source_segment_points,60)
 
