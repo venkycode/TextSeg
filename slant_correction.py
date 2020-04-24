@@ -153,34 +153,29 @@ img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 img = cropROI(img)
 cur_h = img.shape[0]
-ratio = 128/cur_h
+ratio = 64/cur_h
 dim = (int(img.shape[1]*ratio), int(img.shape[0]*ratio))
 img = cv2.resize(img, dim, interpolation=cv2.INTER_LINEAR)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 # (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+N = img.shape[0]
+M = img.shape[1]
+print(N, M)
+W = 2*N
+img= cv2.copyMakeBorder(img,0,0,min(W,N),min(W,N),cv2.BORDER_CONSTANT,value=255)
+print(img)
 cv2.imshow("imm", img)
 cv2.waitKey(0)
 N = img.shape[0]
 M = img.shape[1]
 print(N, M)
 W = 2*N
-print(img)
 ws = 0.56
 wc = 0.26
 wn = 0.18
-sig = 22
-new_img= img.copy()
-new_img= 255- new_img
-contours, _ = cv2.findContours(new_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-cv2.imshow("img", new_img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+sig = 11
 
-cv2.drawContours(new_img, contours, -1, (0, 0, 0), thickness=0)
-cv2.imshow("img", new_img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-cv2.imwrite("cont.jpg",new_img)
 #sigma is large here because the resolution of image is high , we can adjust it to a lower value by lowering resoltion
 #avg_pi(60)
 g = [[0 for i in range(M)] for j in range(M)]
