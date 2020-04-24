@@ -136,6 +136,7 @@ def avg_pi(centr, i):
     out = i + N*(((2*cnt[1]+2*cnt[2]+cnt[3])-(cnt[5]+2*cnt[6]+2*cnt[7])) /
                  ((cnt[1]+2*cnt[2]+2*cnt[3])+2*cnt[4]+(2*cnt[5]+2*cnt[6]+cnt[7])))
     #print(out, i)
+    if(math.isnan(out)): return i ;
     return out
 
 
@@ -182,13 +183,14 @@ g = [[0 for i in range(M)] for j in range(M)]
 b = [[0 for i in range(M)] for j in range(M)]
 for pi in range(min(W+1,M)):g[0][pi]=ws*find_si(0,pi)+wc*find_ci(0,pi)
 for i in range(1,M):
-    print(i)
+    #print(i)
     for pi in range(max(i-W,0),min(i+W+1,M)):
         g[i][pi]=-100000000000000
         for k in range(3):
             if pi-k<0:break
             cur=g[i-1][pi-k]+find_f(i,pi,pi-k)
             #print(cur,end=" ")
+            if(math.isnan(cur)):print(cur)
             if cur>g[i][pi]:
                 g[i][pi]=cur
                 b[i][pi]=pi-k
