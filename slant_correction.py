@@ -189,19 +189,24 @@ for pi in range(min(W+1,M)):g[0][pi]=ws*find_si(0,pi)+wc*find_ci(0,pi)
 for i in range(1,M):
     print(i)
     for pi in range(max(i-W,0),min(i+W+1,M)):
-        for k in range(2):
-
+        g[i][pi]=-100000000000000
+        for k in range(3):
+            if pi-k<0:break
             cur=g[i-1][pi-k]+find_f(i,pi,pi-k)
+            #print(cur,end=" ")
             if cur>g[i][pi]:
                 g[i][pi]=cur
                 b[i][pi]=pi-k
 
+
 opt=[]
 for i in range(M):opt.append(0)
-max_b=0
-for i in range(M-W,M):
-    if g[M-1][i]>max_b:opt[M-1]=i
-for i in range(M-1,1):opt[i-1]=b[i][opt[i]]
+max_b=-1000000000000000000
+for i in range(max(0,M-W),M):
+    if g[M-1][i]>max_b:
+        opt[M-1]=i
+        max_b=g[M-1][i]
+for i in range(M-1,0,-1):opt[i-1]=b[i][opt[i]]
 new_img=img.copy()
 for x in range(M):
     for y in range(N):
