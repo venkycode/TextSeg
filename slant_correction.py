@@ -164,10 +164,10 @@ N = img.shape[0]
 M = img.shape[1]
 print(N, M)
 W = 2*N
-img= cv2.copyMakeBorder(img,0,0,min(W,N),min(W,N),cv2.BORDER_CONSTANT,value=255)
+img= cv2.copyMakeBorder(img,0,0,W,W,cv2.BORDER_CONSTANT,value=255)
 print(img)
-cv2.imshow("imm", img)
-cv2.waitKey(0)
+#cv2.imshow("imm", img)
+#cv2.waitKey(0)
 N = img.shape[0]
 M = img.shape[1]
 print(N, M)
@@ -181,8 +181,8 @@ sig = 11
 #avg_pi(60)
 g = [[0 for i in range(M)] for j in range(M)]
 b = [[0 for i in range(M)] for j in range(M)]
-for pi in range(min(W+1,M)):g[0][pi]=ws*find_si(0,pi)+wc*find_ci(0,pi)
-for i in range(1,M):
+for pi in range(min(2*W+1,M)):g[W][pi]=ws*find_si(W,pi)+wc*find_ci(W,pi)
+for i in range(1+W,M-W):
     #print(i)
     for pi in range(max(i-W,0),min(i+W+1,M)):
         g[i][pi]=-100000000000000
@@ -199,11 +199,11 @@ for i in range(1,M):
 opt=[]
 for i in range(M):opt.append(0)
 max_b=-1000000000000000000
-for i in range(max(0,M-W),M):
-    if g[M-1][i]>max_b:
-        opt[M-1]=i
-        max_b=g[M-1][i]
-for i in range(M-1,0,-1):opt[i-1]=b[i][opt[i]]
+for i in range(M-2*W-1,M-W):
+    if g[M-W-1][i]>max_b:
+        opt[M-W-1]=i
+        max_b=g[M-W-1][i]
+for i in range(M-W-1,W,-1):opt[i-1]=b[i][opt[i]]
 new_img=img.copy()
 for x in range(M):
     for y in range(N):
@@ -214,7 +214,7 @@ for x in range(M):
         new_img[y][x]=img[y][xx]
 print(new_img.shape)
 print(opt)
-cv2.imshow("new_img",new_img)
+#cv2.imshow("new_img",new_img)
 cv2.imwrite("result.jpg",new_img)
 cv2.imwrite("inter.jpg",img)
-cv2.waitKey(0)
+#cv2.waitKey(0)
