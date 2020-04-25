@@ -87,6 +87,7 @@ def find_si(i, pi):
             ans = max(ans, cur)
             cur = 0
     ans = max(ans, cur)
+    #if ans<N/3:ans=0
     return ans
 
 
@@ -172,9 +173,9 @@ N = img.shape[0]
 M = img.shape[1]
 print(N, M)
 W = 2*N
-ws = 0.56
-wc = 0.26
-wn = 0.18
+ws = 0.75
+wc = 0
+wn = 0.25
 sig = 11
 
 #sigma is large here because the resolution of image is high , we can adjust it to a lower value by lowering resoltion
@@ -183,15 +184,16 @@ g = [[0 for i in range(M)] for j in range(M)]
 b = [[0 for i in range(M)] for j in range(M)]
 for pi in range(min(2*W+1,M)):g[W][pi]=ws*find_si(W,pi)+wc*find_ci(W,pi)
 for i in range(1+W,M-W):
-    #print(i)
+    print(i)
     for pi in range(max(i-W,0),min(i+W+1,M)):
         g[i][pi]=-100000000000000
         for k in range(3):
-            if pi-k<0:break
+            if pi-k<i-W:break
             cur=g[i-1][pi-k]+find_f(i,pi,pi-k)
             #print(cur,end=" ")
             if(math.isnan(cur)):print(cur)
             if cur>g[i][pi]:
+                #print(i,pi,cur)
                 g[i][pi]=cur
                 b[i][pi]=pi-k
 
@@ -203,17 +205,26 @@ for i in range(M-2*W-1,M-W):
     if g[M-W-1][i]>max_b:
         opt[M-W-1]=i
         max_b=g[M-W-1][i]
-for i in range(M-W-1,W,-1):opt[i-1]=b[i][opt[i]]
+#print(opt[M-W-1],end=" ")
+for i in range(M-W-1,W,-1):
+    opt[i-1]=b[i][opt[i]]
+    #print(opt[i-1],end=" ")
+#print()
+for i in range(max(0,M-W-2-W),M-1):print(b[M-W-2][i],end=" ")
+#print(b[M-W-2][opt[M-W-2]])
 new_img=img.copy()
-for x in range(M):
+for x in range(W,M-W):
     for y in range(N):
         i=x
         pi=opt[i]
-        xx= int( math.floor(((pi-i)*(y-N+1)/(N-1))+pi))
+        xx= i+((pi-i)/(N-1))*y
+        fp=xx-int(xx)
+        xx=int(xx)
+        if fp>=0.5:xx+=1
         #print(x,y)
         new_img[y][x]=img[y][xx]
 print(new_img.shape)
-print(opt)
+#print(opt)
 #cv2.imshow("new_img",new_img)
 cv2.imwrite("result.jpg",new_img)
 cv2.imwrite("inter.jpg",img)
