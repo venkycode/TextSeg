@@ -74,7 +74,7 @@ def find_si(i, pi):
     ans = 0
     cur = 0
     for j in range(N):
-        y = i+slope*(j-i)
+        y = i+slope*j
         fp = y-int(y)
         y = int(y)
         if fp >= 0.5:
@@ -97,7 +97,7 @@ def find_gamma(i, pi, prev_pi):
     slope = (pi-i)/(N-1)
     ans = 0
     for j in range(N):
-        y = i+slope*(j-i)
+        y = i+slope*j
         fp = y-int(y)
         y = int(y)
         if fp >= 0.5:
@@ -188,10 +188,8 @@ for i in range(1+W,M-W):
     for pi in range(max(i-W,0),min(i+W+1,M)):
         g[i][pi]=-100000000000000
         for k in range(3):
-            if pi-k<i-W:break
             cur=g[i-1][pi-k]+find_f(i,pi,pi-k)
             #print(cur,end=" ")
-            if(math.isnan(cur)):print(cur)
             if cur>g[i][pi]:
                 #print(i,pi,cur)
                 g[i][pi]=cur
@@ -205,12 +203,11 @@ for i in range(M-2*W-1,M-W):
     if g[M-W-1][i]>max_b:
         opt[M-W-1]=i
         max_b=g[M-W-1][i]
-#print(opt[M-W-1],end=" ")
+print(opt[M-W-1],end=" ")
 for i in range(M-W-1,W,-1):
     opt[i-1]=b[i][opt[i]]
-    #print(opt[i-1],end=" ")
+    print(opt[i-1],end=" ")
 #print()
-for i in range(max(0,M-W-2-W),M-1):print(b[M-W-2][i],end=" ")
 #print(b[M-W-2][opt[M-W-2]])
 new_img=img.copy()
 for x in range(W,M-W):
