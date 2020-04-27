@@ -149,9 +149,9 @@ def avg_pi(centr, i):
 
 
 def find_ci(i, pi):
-
+    return 0
     # use trial and error
-    return -1 * abs(avg_pi(min(i, pi)+abs(i-pi)/2, i) - pi)
+    #return -1 * abs(avg_pi(min(i, pi)+abs(i-pi)/2, i) - pi)
 
 
 def find_f(i, pi, prev_pi):
@@ -190,7 +190,7 @@ sig = 11* (N/64)
 g = [[0 for i in range(M)] for j in range(M)]
 b = [[0 for i in range(M)] for j in range(M)]
 for pi in range(min(2*W+1,M)):g[W][pi]=ws*find_si(W,pi)+wc*find_ci(W,pi)
-for i in range(1+W,M-W):
+for i in range(1+W,M):
     print(i)
     for pi in range(max(i-W,0),min(i+W+1,M)):
         g[i][pi]=-100000000000000
@@ -201,23 +201,23 @@ for i in range(1+W,M-W):
                 #print(i,pi,cur)
                 g[i][pi]=cur
                 b[i][pi]=pi-k
+            elif cur==g[i][pi]:
+                b[i][pi]= pi-1
+
 
 
 opt=[]
 for i in range(M):opt.append(0)
-max_b=-1000000000000000000
-for i in range(M-2*W-1,M-W):
-    if g[M-W-1][i]>max_b:
-        opt[M-W-1]=i
-        max_b=g[M-W-1][i]
+for i in range(W): opt[i]=i
+opt[M-1]=M-1
 print(opt[M-W-1],end=" ")
-for i in range(M-W-1,W,-1):
+for i in range(M-1,W,-1):
     opt[i-1]=b[i][opt[i]]
     print(opt[i-1],end=" ")
 #print()
 #print(b[M-W-2][opt[M-W-2]])
 new_img=img.copy()
-for x in range(W,M-W):
+for x in range(W,M):
     for y in range(N):
         i=x
         pi=opt[i]
