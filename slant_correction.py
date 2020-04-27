@@ -4,7 +4,7 @@ import numpy as np
 from math import ceil
 import math
 
-input_img = "./testimg.jpeg"
+input_img = "./test1.png"
 img = cv2.imread(input_img)
 
 
@@ -51,19 +51,24 @@ def cropROI(image):
     end_y = height
     for i in range(width):
         if verticle_projection[i]:
-            start_x = i-1
+            
+            if(i): start_x = i-1
+            else: start_x=i
             break
     for i in range(width-1, 0, -1):
         if verticle_projection[i]:
-            end_x = i+1
+            if(width-1-i):end_x = i+1
+            else: end_x= width-1
             break
     for i in range(height):
         if horizontal_projection[i]:
-            start_y = i-1
+            if(i):start_y = i-1
+            else: start_y=i
             break
     for i in range(height-1, 0, -1):
         if horizontal_projection[i]:
-            end_y = i+1
+            if(height-1-i):end_y = i+1
+            else: height=i
             break
     image = image[start_y:end_y, start_x:end_x]
     return image
@@ -75,7 +80,7 @@ def find_si(i, pi):
     cur = 0
     for j in range(N):
         y = i+slope*j
-        fp = y-int(y)
+        fp = y-math.floor(y)
         y = int(y)
         if fp >= 0.5:
             y += 1
@@ -87,13 +92,14 @@ def find_si(i, pi):
             ans = max(ans, cur)
             cur = 0
     ans = max(ans, cur)
-    #if ans<N/3:ans=0
-    return ans
+    if ans<N/3:ans=0
+    return ((ans/N)*64) # this change is done so that it adapts irresptive of resolution change
 
 
 def find_gamma(i, pi, prev_pi):
     if pi == prev_pi+1:
         return 0
+    if i==W: return 0
     slope = (pi-i)/(N-1)
     ans = 0
     for j in range(N):
@@ -138,6 +144,7 @@ def avg_pi(centr, i):
                  ((cnt[1]+2*cnt[2]+2*cnt[3])+2*cnt[4]+(2*cnt[5]+2*cnt[6]+cnt[7])))
     #print(out, i)
     if(math.isnan(out)): return i ;
+    if(sum(cnt)<N/2): return i
     return out
 
 
@@ -155,7 +162,7 @@ img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 img = cropROI(img)
 cur_h = img.shape[0]
-ratio = 64/cur_h
+ratio =128/cur_h
 dim = (int(img.shape[1]*ratio), int(img.shape[0]*ratio))
 img = cv2.resize(img, dim, interpolation=cv2.INTER_LINEAR)
 (thresh, img) = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
@@ -176,7 +183,7 @@ W = 2*N
 ws = 0.75
 wc = 0
 wn = 0.25
-sig = 11
+sig = 11* (N/64)
 
 #sigma is large here because the resolution of image is high , we can adjust it to a lower value by lowering resoltion
 #avg_pi(60)
@@ -223,6 +230,6 @@ for x in range(W,M-W):
 print(new_img.shape)
 #print(opt)
 #cv2.imshow("new_img",new_img)
-cv2.imwrite("result.jpg",new_img)
+cv2.imwrite("result1.jpg",new_img)
 cv2.imwrite("inter.jpg",img)
 #cv2.waitKey(0)
