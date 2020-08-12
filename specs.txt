@@ -1,0 +1,62 @@
+x*cutoff 
+img1.jpg=0.3
+img2.jpg= 0.5
+images need to be standardized
+header and footer detection
+connected words have more length hence cutted them in half and then applied djikstra
+
+4 43 : increased weight while traveling from white to white so that the path is not deviated
+
+as the text is not standardized we need to adjust the cutoff factor for every image
+
+            the_factor      offset
+
+
+im1=        5               15    
+im2=        2.5             15
+im3       2.5             15   ## short letter
+.
+.
+im6=        2.5             15   ## need standardisation in resolution
+.
+.
+.
+im8         3.27            15
+im9         2.5             15   ## "velanti" nott seperating
+im10        2.5(8)           15   # failing to seperate "sha" and "ta"
+im11        3.27            20   
+im12        2               15  # "ga" and "na" are oddly connected ,, partly failing
+im13        3.59            15
+im14        3               25
+im15        3               20
+im16        5               25    #
+im17        2.5             15
+im18        3               15
+im19        2.5             15
+im20        2.5             15
+
+
+
+date 26-02
+
+variables for
+
+bangla segmentation
+
+header_offset = 0.2
+cutoff_factor = 0.2  # adjustable
+source_distance=10
+offset = 20
+shortest_path_cutoff=0.25
+
+
+
+oriya segmentation
+
+header_offset = 0.2
+cutoff_factor = 0.25  # adjustable
+source_distance=10
+offset = 30
+shortest_path_cutoff=0.30
+
+

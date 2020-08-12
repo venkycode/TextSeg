@@ -1,0 +1,28 @@
+Dynamic Programming Approach for Character Segmentation
+
+Terms:
+Pixel bar: A vertical group of pixels over a horizontal zone
+Reachable: A pixel bar is defined as reachable if it could possibly be a part of a segment seperating characters (for this, it has to be "reachable" from both top and bottom via a segment, possibly curved but strictly without a U-turn).
+
+Basic Idea :
+	Our ultimate objective is to trace the segments which would seperate characters from each other. So, the main idea is to get all the reachable pixel bars so that we can trace segments through them, in order to seperate characters.In order to get all the reachable pixels, we use a dynamic programming approach which is explained below in detail. 
+	This method seperates all the single characters and loosely connected double characters but does not work on strongly connected double characters. 
+
+Implementation Steps:
+
+Remove header line by well-known horizontal projection profile method.
+Divide the image into horizontal zones across its height. The number of zones can be fixed depending on the resolution of image and other factors. Take vertical projection profiles over all the zones.
+We would maintain 2 two-dimensional arrays isReachable[number of zones][width], a boolean array which tells if a corresponding pixel bar is reachable  and dp[number of zones][width], which stores the number of reachable pixel bars in the next zone, from a corresponding pixel bar.
+All the white pixel bars (those with zero vertical projection) in the topmost zone are assumed to be reachable and rest non-reachable, i.e. isReachable[0][i]=1, if vertical projection over topmost zone across ith column is zero.
+Now, if any pixel bar(i, j) is reachable, then all the white pixel bars in its next zone in a certain offset in both directions (i+1, k) such that |k-j| <= offset (the value of offset can be fixed according to image resolution and other factors) are marked reachable and all the next white pixel bars (till we encounter first non-white pixel bar) are marked reachable. The number of all these pixel bars marked reachable like this, in row (i + 1) is stored in dp[i][j].
+If for any reachable pixel bar(i, j) dp[i][j] comes out to be zero, it obviously means it's a dead end. So we mark that pixel bar unreachable and recursively backtrack in the upper zone through arrival path.
+During backtracking at pixel bar(i,j) we decrement dp[i][j] by 1 since the pixel bar previously marked reachable turned out to be unreachable. In this process, if dp[i][j] is nullified, we mark (i,j) unreachable and recur on (i,j).
+After this procedure, we get all the reachable pixel bars and we need to trace a segment through them such that characters are seperated. We want vertical segments wherever possible, and curves otherwise.
+In order to achieve this, we need source pixel bars to start the segment tracing so we iterate on the zone corresponding to removed header and find the consecutive segments of white pixel bars. We use some, preferably 10 pixel bars, placed uniformly in each one of those segments as candidate source pixel bars.
+In segment tracing, we start from source pixel bar and choose the nearest white pixel bar in the next zone in the offset distance. In case, there's no white pixel bar in the offset distance, we cancel that segment. Since we prefer vertical segments to curves, we want the summation of deviation between adjacent zones, over all zones to be minimum. So, for each of the consecutive horizontal segments of white pixels along the header zone, among 10 candidate source pixels, we pick the one having the minimum total deviation and finalize the segement traced using it as a source, thus seperating all the characters from each other.
+
+Complexity Analysis :
+	Let N = Number of horizontal zones,  W = Width of Image.
+	In this algorithm, we iterate over the width of all zones and at every pixel bar (i, j) we iterate horizontally on the zone (i + 1) to find reachable pixels and get dp[i][j]. The same thing holds true for backtracking as well, as far as we are doing complexity analysis.
+	Time Complexity : O(N * W * W)
+	Space Complexity : O(N * W)
